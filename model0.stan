@@ -1,16 +1,18 @@
-
+//
+// This Stan program defines a simple model, with a
+// vector of values 'y' modeled as normally distributed
+// with mean 'mu' and standard deviation 'sigma'.
 data {
   int<lower=0> N;
+   vector[N] x;
   vector[N] y;
-  vector[N] x;
 }
 
 // The parameters accepted by the model. Our model
 // accepts two parameters 'mu' and 'sigma'.
 parameters {
-  real alpha;
-  real beta;
-  real<lower=0.5, upper=1> gamma;
+  real beta0;
+  real beta1;
   real<lower=0> sigma;
 }
 
@@ -18,10 +20,9 @@ parameters {
 // 'y' to be normally distributed with mean 'mu'
 // and standard deviation 'sigma'.
 model {
-  alpha ~ normal(0,1e6);
-  beta ~ normal(0,1e6);
-  gamma ~ uniform(0.5,1);
-  for(i in 1:N)
-    y[i] ~ normal(alpha-beta*pow(gamma,x[i]), sigma);
+  beta0 ~ normal(0,1e6);
+  beta1 ~ normal(0,1e6);
+  sigma ~ cauchy(0,5);
+  y ~ normal(beta0+beta1*x , sigma);
 }
 
